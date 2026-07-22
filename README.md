@@ -47,7 +47,7 @@ pip install -r requirements.txt
 jupyter notebook notebooks/rating_prediction.ipynb
 ```
 
-Readable HTML version of the same report: [`notebooks/workbook.html`](notebooks/workbook.html).
+Readable HTML version of the same report: [`notebooks/workbook.html`](https://xchyue.github.io/amazon-review-rating-prediction/notebooks/workbook.html).
 
 ## What’s where (from your original files)
 
