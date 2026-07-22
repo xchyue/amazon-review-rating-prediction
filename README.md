@@ -1,63 +1,44 @@
 # Amazon Review Rating Prediction
 
-Predict Amazon book review star ratings (1–5) from review text using hand-implemented TF-IDF features and classical regressors.
-
-This repo is a cleaned packaging of the CSE 158 Assignment 2 workbook (`Assignment2.ipynb` / `workbook.html`). Notebook section order matches the HTML report.
-
-## Data
-
-McAuley Amazon Review Data (Books subset), **500K** reviews. Do **not** commit the dataset. Download [Books.json.gz](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/) and place it at:
-
-```text
-dataset/Books.json.gz
-```
-
-Or set `AMAZON_BOOKS_PATH` to a local copy (e.g. `Books_500k.json`).
-
-## Method
-
-Handwritten **TF / DF / TF-IDF** (binary TF + IDF) over top-1000 unigrams/bigrams, then compare **Ridge**, **Lasso**, and **Random Forest**. Evaluation: MSE on a fixed 80/20 split (400k / 100k).
-
-Core feature code (your Assignment2 implementations) lives in [`src/features.py`](src/features.py).
+Predicting star ratings (1–5) from review text on 500K Amazon book reviews,
+with hand-written TF-IDF features and classical regressors. Course project
+for CSE 158 (Recommender Systems & Web Mining) at UCSD, Fall 2025.
 
 ## Results
 
-Best model: **Ridge + TF-IDF Unigrams**, MSE **0.590** (~42% better than the mean baseline of 1.017).
+| Model | Test MSE |
+| --- | ---: |
+| Mean baseline | 1.017 |
+| Ridge + count unigrams | 0.633 |
+| Ridge + TF-IDF unigrams | **0.590** |
+| Lasso + TF-IDF unigrams | 0.590 |
+| Random forest + TF-IDF unigrams | 0.699 |
 
-| Model | MSE | vs Baseline |
-| --- | ---: | ---: |
-| Baseline (Mean) | 1.017 | 0% |
-| Ridge + Count Unigrams | 0.633 | 37.7% |
-| Ridge + TFIDF Unigrams | **0.590** | **42.0%** |
-| Lasso + TFIDF Unigrams | 0.590 | 42.0% |
-| Random Forest + TFIDF Unigrams | 0.699 | 31.2% |
+Ridge on TF-IDF unigrams works best, cutting MSE about 42% below the mean
+baseline. Bigrams consistently underperformed unigrams. As a sanity check on
+the learned weights: the most negative coefficients were "waste",
+"disappointing" and "boring", which matches intuition.
 
 ![Model comparison](figures/model_comparison.png)
 
-![Rating distribution](figures/rating_distribution.png)
+## Data
 
-## Reproduction
+Books subset of the [McAuley Amazon Review Data](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/),
+first 500K reviews. The dataset is not committed to the repo — download
+`Books.json.gz` and place it at `dataset/Books.json.gz`.
+
+## Method
+
+TF, DF and TF-IDF are implemented from scratch in `src/features.py`
+(binary TF, top-1000 unigram and bigram vocabularies) rather than with
+sklearn's vectorizers. Models train on the first 400K reviews and are
+evaluated on the held-out 100K.
+
+## Running it
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
 pip install -r requirements.txt
-
-# put Books.json.gz under dataset/
 jupyter notebook notebooks/rating_prediction.ipynb
 ```
 
-Readable HTML version of the same report: [`notebooks/workbook.html`](https://xchyue.github.io/amazon-review-rating-prediction/notebooks/workbook.html).
-
-## What’s where (from your original files)
-
-| Source file | Used for |
-| --- | --- |
-| `Assignment2.ipynb` | Main notebook structure, code, outputs, write-ups |
-| `workbook.html` | Same report as rendered HTML (kept under `notebooks/`) |
-| `EDA.ipynb` / EDA cells in Assignment2 | Section 1 Exploratory analysis |
-| `feat_engr.ipynb` | Feature write-ups; final TF/DF/TF-IDF code from Assignment2 |
-| `book_review.ipynb` | Earlier drafts of fit helpers / modeling loops |
-| `amazon.ipynb` / `Amazon Review.ipynb` | Early prototypes (not needed to re-run the final report) |
-
-CSE 158 course project.
+An HTML render of the finished notebook is in `notebooks/workbook.html`.
